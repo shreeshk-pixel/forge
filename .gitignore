@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.output/
+.nitro/
+.vercel/
+.tanstack/
+.grok/
+screenshots/
+artifacts/
+*.log
+.DS_Store
+src/routeTree.gen.ts
+.project_id
+.node_modules.lock
+AGENTS.md

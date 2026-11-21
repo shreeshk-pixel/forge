@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0e1116;
+  --color-surface: #161b22;
+  --color-raised: #1e2631;
+  --color-fg: #e8edf2;
+  --color-muted: #8b97a6;
+  --color-line: #2c3644;
+  --color-copper: #e8a54b;
+  --color-copper-ink: #1a1206;
+  --color-ok: #7dcea0;
+  --color-bad: #f07178;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --radius-md: 0.625rem;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--color-copper) 35%, transparent);
+  }
+}
+
+@layer components {
+  .forge-editor .cm-editor {
+    height: 100%;
+    background: var(--color-bg);
+  }
+  .forge-editor .cm-scroller {
+    font-family: var(--font-mono);
+    line-height: 1.55;
+  }
+  .forge-editor .cm-gutters {
+    background: var(--color-surface);
+    color: var(--color-muted);
+    border-right: 1px solid var(--color-line);
+  }
+  .forge-editor .cm-activeLineGutter,
+  .forge-editor .cm-activeLine {
+    background: color-mix(in srgb, var(--color-raised) 80%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
