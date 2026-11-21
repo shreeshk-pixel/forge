@@ -2,11 +2,14 @@ import { useEffect, useState, type ComponentType } from "react";
 
 type Props = { value: string; onChange: (next: string) => void };
 
+const editorLoad = typeof window === "undefined" ? null : import("./editor-impl");
+
 export function JavaEditor(props: Props) {
   const [Impl, setImpl] = useState<ComponentType<Props> | null>(null);
   useEffect(() => {
     let live = true;
-    void import("./editor-impl").then((mod) => {
+    const pending = editorLoad ?? import("./editor-impl");
+    void pending.then((mod) => {
       if (live) setImpl(() => mod.JavaEditorImpl);
     });
     return () => {

@@ -1,4 +1,5 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { isUnlocked, lessons, modules } from "@/lib/curriculum";
 import { useForge } from "@/lib/progress";
 import { ShardMeter } from "@/components/forge/shards";
@@ -8,6 +9,12 @@ export function HomeScreen() {
   const cleared = lessons.filter((l) => done[l.id] != null).length;
   const next = lessons.find((l) => done[l.id] == null && isUnlocked(l.id, done)) ?? lessons[0]!;
   const pct = Math.round((cleared / lessons.length) * 100);
+  const router = useRouter();
+
+  useEffect(() => {
+    void router.preloadRoute({ to: "/learn/$lessonId", params: { lessonId: next.id } });
+    void import("@/components/forge/editor-impl");
+  }, [router, next.id]);
 
   return (
     <div className="min-h-dvh bg-bg text-fg">
@@ -31,6 +38,7 @@ export function HomeScreen() {
           <Link
             to="/learn/$lessonId"
             params={{ lessonId: next.id }}
+            preload="render"
             className="inline-flex min-h-11 items-center bg-copper px-4 text-sm font-medium text-copper-ink"
           >
             {cleared === 0 ? "Start with variables" : `Continue · ${next.title}`}

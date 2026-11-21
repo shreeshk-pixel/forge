@@ -1,4 +1,4 @@
-import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Outlet, Scripts, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { AuthProvider } from "@/lib/auth/provider";
 import { PreviewHostBridge } from "@/components/preview-host-bridge";
@@ -36,6 +36,7 @@ function Root() {
       </head>
       <body>
         <PreviewHostBridge />
+        <NavProgress />
         <AuthProvider>
           <ForgeBoot />
           <Outlet />
@@ -44,6 +45,20 @@ function Root() {
       </body>
     </html>
   );
+}
+
+function NavProgress() {
+  const pending = useRouterState({ select: (s) => s.status === "pending" });
+  useEffect(() => {
+    if (!pending) return;
+    const previous = document.title;
+    document.title = "Opening…";
+    return () => {
+      document.title = previous;
+    };
+  }, [pending]);
+  if (!pending) return null;
+  return <div className="fixed inset-x-0 top-0 z-50 h-1 bg-copper" role="progressbar" aria-label="Opening" />;
 }
 
 function ForgeBoot() {
