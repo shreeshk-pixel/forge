@@ -130,7 +130,7 @@ export function LessonScreen({ lesson }: { lesson: Lesson }) {
   return (
     <Shell lesson={lesson} pathOpen={pathOpen} setPathOpen={setPathOpen}>
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-        <article className="border-b border-line px-4 py-4 lg:w-96 lg:shrink-0 lg:overflow-y-auto lg:border-r lg:border-b-0">
+        <article className="max-h-[30vh] shrink-0 overflow-y-auto border-b border-line px-4 py-4 lg:max-h-none lg:w-96 lg:shrink-0 lg:overflow-y-auto lg:border-r lg:border-b-0">
           <p className="font-mono text-xs tracking-widest text-copper uppercase">
             {lesson.module} · {index + 1}/{lessons.length}
             {stars != null ? ` · ${stars} stars` : ""}
@@ -156,11 +156,11 @@ export function LessonScreen({ lesson }: { lesson: Lesson }) {
           {notice ? <p className="mt-4 text-sm text-bad">{notice}</p> : null}
         </article>
 
-        <section className="flex min-h-[36rem] min-w-0 flex-1 flex-col lg:min-h-0">
-          <div className="min-h-96 flex-1 border-b border-line">
+        <section className="flex min-h-0 flex-1 flex-col">
+          <div className="min-h-0 flex-1 border-b border-line">
             <JavaEditor value={code} onChange={setCode} />
           </div>
-          <div className="flex flex-wrap items-center gap-2 border-b border-line px-3 py-2">
+          <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-line px-3 py-2">
             <button type="button" onClick={check} className="inline-flex min-h-11 items-center bg-copper px-4 text-sm font-medium text-copper-ink">
               Check
             </button>
@@ -184,10 +184,15 @@ export function LessonScreen({ lesson }: { lesson: Lesson }) {
               <RotateCcw className="size-4" aria-hidden="true" />
               Reset
             </button>
-            <span className="ml-auto hidden font-mono text-xs text-muted sm:inline">Ctrl+Enter checks</span>
+            <Verdict grade={grade} runNote={runNote} passed={passed} />
           </div>
-          <div className="max-h-64 overflow-auto px-4 py-3 font-mono text-xs leading-relaxed lg:max-h-52">
-            <Console grade={grade} runNote={runNote} passed={passed} stars={stars} next={next} />
+          <div className="max-h-40 shrink-0 overflow-auto px-4 py-3 font-mono text-sm leading-relaxed">
+            {notice ? <p className="mb-2 text-bad">{notice}</p> : null}
+            {hinted && grade == null && runNote == null ? (
+              <p className="text-muted">{lesson.hint}</p>
+            ) : (
+              <Console grade={grade} runNote={runNote} passed={passed} stars={stars} next={next} />
+            )}
           </div>
         </section>
       </div>
@@ -207,7 +212,7 @@ function Shell({
   children: ReactNode;
 }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-bg text-fg lg:h-dvh lg:overflow-hidden">
+    <div className="flex h-dvh flex-col overflow-hidden bg-bg text-fg">
       <header className="flex items-center gap-3 border-b border-line px-3 py-2">
         <Link to="/" className="inline-flex min-h-11 min-w-11 items-center justify-center text-muted" aria-label="Back to path">
           <ArrowLeft className="size-4" />
@@ -241,6 +246,32 @@ function Shell({
         </div>
       ) : null}
     </div>
+  );
+}
+
+function Verdict({
+  grade,
+  runNote,
+  passed,
+}: {
+  grade: GradeResult | null;
+  runNote: string | null;
+  passed: boolean;
+}) {
+  if (runNote != null && grade == null) {
+    return <span className="ml-auto font-mono text-xs text-muted">Ran</span>;
+  }
+  if (grade == null) {
+    return <span className="ml-auto hidden font-mono text-xs text-muted sm:inline">Ctrl+Enter checks</span>;
+  }
+  if (grade.compileError) {
+    return <span className="ml-auto max-w-[14rem] truncate font-mono text-xs text-bad">Won't compile</span>;
+  }
+  const failed = grade.results.filter((row) => !row.ok).length;
+  return (
+    <span className={`ml-auto font-mono text-xs ${passed ? "text-ok" : "text-bad"}`}>
+      {passed ? "Cleared" : `${failed} failed`}
+    </span>
   );
 }
 

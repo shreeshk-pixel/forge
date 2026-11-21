@@ -21,12 +21,12 @@ export function JavaEditor(props: Props) {
         onChange={(event) => props.onChange(event.target.value)}
         spellCheck={false}
         aria-label="Java editor"
-        className="h-full min-h-96 w-full resize-none bg-bg p-4 font-mono text-sm leading-relaxed text-fg outline-none"
+        className="h-full min-h-0 w-full resize-none bg-bg p-4 font-mono text-sm leading-relaxed text-fg outline-none"
       />
     );
   }
   return (
-    <div className="forge-editor h-full min-h-96">
+    <div className="forge-editor h-full min-h-0">
       <Impl {...props} />
     </div>
   );
